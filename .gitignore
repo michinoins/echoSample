@@ -1,1 +1,4 @@
 mysql/
+
+go.sum
+go.mod
