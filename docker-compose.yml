@@ -1,0 +1,18 @@
+version: "3.6"
+services:
+  db:
+    image: mysql:5.7
+    container_name: go_sample
+    volumes:
+      # mysqlの設定
+      - ./mysql/conf:/etc/mysql/conf.d
+      # データを永続化するために、データ格納先をdockerとマウントする  //左がプロジェクトディレクトリで右がdocker上にあるディレクトリだったような(?)その対応関係
+      - ./mysql/data:/var/lib/mysql
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: go_sample
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: root
+      TZ: "Asia/Tokyo"
