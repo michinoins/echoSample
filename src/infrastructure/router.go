@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"echoSample/src/auth"
 	controllers "echoSample/src/interfaces/api"
 	"net/http"
 
@@ -14,6 +15,7 @@ func Init() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
+
 	userController := controllers.NewUserController(NewSqlHandler())
 
 	e.GET("/users", func(c echo.Context) error {
@@ -32,6 +34,19 @@ func Init() {
 		id := c.Param("id")
 		userController.Delete(id)
 		return c.String(http.StatusOK, "deleted")
+	})
+
+	// Login router
+	e.POST("/login", func(c echo.Context) error {
+		return auth.Login(c)
+	})
+
+	// Restricted group
+	r := e.Group("/restricted")
+	r.Use(middleware.JWT([]byte("secret")))
+	r.GET("/sample", func(c echo.Context) error {
+		auth.Restricted(c)
+		return c.String(http.StatusOK, "passToken")
 	})
 
 	// Start server
